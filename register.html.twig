@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <div style="max-width: 500px; margin: auto;">
+        <h1>Inscription</h1>
+
+        {# 1. AFFICHAGE DES ERREURS (Indispensable pour savoir ce qui bloque) #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div style="padding: 10px; margin-bottom: 10px; color: white; background-color: {{ label == 'success' ? 'green' : 'red' }};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.profile_name) }}
+            {{ form_row(registrationForm.password) }}
+            
+            {# 2. AJOUT DU CHAMP ROLES (Il manquait celui-là !) #}
+            <div style="margin: 20px 0; padding: 10px; border: 1px solid #ccc;">
+                {{ form_label(registrationForm.roles) }}
+                {{ form_widget(registrationForm.roles) }}
+                {{ form_errors(registrationForm.roles) }}
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 10px; cursor: pointer;">S’inscrire</button>
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}
