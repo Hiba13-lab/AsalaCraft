@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - AsalaCraft{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4 border-0">
+                <h1 class="h3 mb-4 fw-bold text-center">Créer un compte</h1>
+
+                {{ form_start(registrationForm) }}
+                    {# Cette ligne va afficher tous les champs automatiquement #}
+                    {# sans faire d'erreur sur les noms des propriétés #}
+                    {{ form_widget(registrationForm) }}
+
+                    <button type="submit" class="btn btn-lg btn-primary w-100 mt-4 shadow-sm">
+                        S'inscrire
+                    </button>
+                {{ form_end(registrationForm) }}
+                
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_login') }}" class="text-muted small">Déjà un compte ? Connectez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

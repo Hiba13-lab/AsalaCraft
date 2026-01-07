@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du produit - {{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        {# Section Visuelle : Image du produit #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                {% if product.image %}
+                    <img src="{{ asset('uploads/products/' ~ product.image) }}" class="img-fluid rounded-start" alt="{{ product.name }}">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                        <span class="text-muted">Aucune image disponible</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Section Infos : Détails et Actions #}
+        <div class="col-md-6">
+            <div class="p-3">
+                <h1 class="display-5 fw-bold">{{ product.name }}</h1>
+                
+                {% if product.category %}
+                    <span class="badge bg-info text-dark mb-3">{{ product.category.name }}</span>
+                {% endif %}
+
+                <p class="h3 text-primary mb-4">{{ product.price }} €</p>
+                
+                <hr>
+                
+                <h5>Description</h5>
+                <p class="lead text-muted">{{ product.description|default('Aucune description fournie.') }}</p>
+
+                <div class="mt-5 p-4 bg-light rounded border">
+                    <h6 class="text-uppercase text-muted mb-3">Administration du produit</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary">
+                            ⬅️ Retour à la liste
+                        </a>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning">
+                            ✏️ Modifier
+                        </a>
+                        {# On inclut le formulaire de suppression fourni par Symfony #}
+                        <div class="ms-auto">
+                            {{ include('product/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

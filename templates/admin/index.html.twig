@@ -1,0 +1,59 @@
+{# templates/admin/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Panneau d'administration{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-danger">🛡️ Dashboard Administrateur</h1>
+        
+        <hr>
+
+        {# --- MÉTHODE COMPLÈTE : Vérification de sécurité --- #}
+        {% if app.user %}
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <span>
+                    Bienvenue, <strong>{{ app.user.profileName|default(app.user.userIdentifier) }}</strong>. 
+                    Vous avez les pleins pouvoirs sur la plateforme.
+                </span>
+                {# Bouton de déconnexion rapide pour tes tests #}
+                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger btn-sm">Se déconnecter</a>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                Attention : Vous n'êtes pas identifié. <a href="{{ path('app_login') }}">Connectez-vous ici</a>.
+            </div>
+        {% endif %}
+        {# -------------------------------------------------- #}
+
+        <div class="row mt-4">
+            {# Carte Utilisateurs (FONCTIONNELLE) #}
+            <div class="col-md-4">
+                <div class="card bg-light p-3 border-primary shadow-sm">
+                    <h3>👥 Utilisateurs</h3>
+                    <p>Gérer les clients, les vendeurs et leurs rôles.</p>
+                    {# Route générée par ton CRUD User #}
+                    <a href="{{ path('app_user_index') }}" class="btn btn-primary w-100">Accéder à la gestion</a>
+                </div>
+            </div>
+
+            {# Carte Produits (EN ATTENTE) #}
+            <div class="col-md-4">
+                <div class="card bg-light p-3 shadow-sm" style="opacity: 0.7;">
+                    <h3>🛒 Produits</h3>
+                    <p>Modérer les annonces (Bientôt disponible).</p>
+                    <button class="btn btn-secondary disabled w-100">En attente de l'entité</button>
+                </div>
+            </div>
+
+            {# Carte Statistiques (EN ATTENTE) #}
+            <div class="col-md-4">
+                <div class="card bg-light p-3 shadow-sm" style="opacity: 0.7;">
+                    <h3>📊 Statistiques</h3>
+                    <p>Volume des ventes (Bientôt disponible).</p>
+                    <button class="btn btn-secondary disabled w-100">En attente des commandes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

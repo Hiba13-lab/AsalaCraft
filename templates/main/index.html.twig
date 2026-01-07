@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AsalaCraft - Boutique d'Artisanat{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="bg-white p-5 mb-5 rounded shadow-sm border text-center">
+        <h1 class="display-4 fw-bold">🎨 Bienvenue sur AsalaCraft</h1>
+        
+        {% if app.user %}
+            <div class="alert alert-info d-inline-block p-4 mt-2 shadow-sm">
+                <h2 class="h4">Bonjour, {{ app.user.email }} !</h2>
+                {% if is_granted('ROLE_SELLER') %}
+                    <a href="{{ path('app_product_index') }}" class="btn btn-warning btn-lg fw-bold shadow border-dark mt-2">
+                        📦 GÉRER MES PRODUITS
+                    </a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="bg-light p-4 rounded border mb-4">
+                <a href="{{ path('app_login') }}" class="btn btn-outline-primary">Connexion</a>
+                <a href="{{ path('app_register') }}" class="btn btn-primary ms-2">Créer un compte</a>
+            </div>
+        {% endif %}
+
+        <form action="{{ path('app_home') }}" method="get" class="d-flex justify-content-center mt-4">
+            <input type="text" name="search" class="form-control w-50" placeholder="Rechercher une création..." value="{{ searchTerm }}">
+            <button class="btn btn-dark ms-2" type="submit">🔍 Rechercher</button>
+        </form>
+    </div>
+
+    <h2 class="mb-4">✨ Nos Produits</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <div style="height: 200px; background: #f8f9fa;" class="d-flex align-items-center justify-content-center">
+                        {% if product.image %}
+                            <img src="{{ asset('uploads/products/' ~ product.image) }}" class="card-img-top h-100 w-100" style="object-fit: cover;">
+                        {% else %}
+                            <span class="text-muted">Pas d'image</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                        {% if product.category %}
+                            <span class="badge bg-info text-dark mb-2">{{ product.category.name }}</span>
+                        {% endif %}
+                        <p class="text-primary fw-bold h4">{{ product.price }} €</p>
+                        {# UTILISATION DE L'ID POUR ÉVITER LES ERREURS #}
+                        <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-outline-dark btn-sm mt-2">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <p class="lead text-muted">Aucun produit trouvé. 🏺</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
