@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,27 +12,30 @@ use Symfony\Component\Routing\Attribute\Route;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(ProductRepository $productRepository, Request $request): Response
+    public function index(ProductRepository $productRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
         $searchTerm = $request->query->get('search');
-        $user = $this->getUser();
-        $sellerProfile = $user ? $user->getSellerProfile() : null;
+        $categoryId = $request->query->get('category'); // On récupère l'ID de la catégorie cliquée
+        
+        $categories = $categoryRepository->findAll();
 
         // LOGIQUE DE FILTRAGE
-        if ($searchTerm) {
-            // Si on recherche, on cherche dans tout le catalogue (ou tu peux restreindre aussi)
+        if ($categoryId) {
+            // Si on a cliqué sur un bouton de catégorie
+            $products = $productRepository->findBy(['category' => $categoryId]);
+        } elseif ($searchTerm) {
+            // Si on utilise la barre de recherche
             $products = $productRepository->findBySearchTerm($searchTerm);
-        } elseif ($sellerProfile) {
-            // SI l'utilisateur est un VENDEUR, on ne lui montre que SES produits
-            $products = $productRepository->findBy(['seller' => $sellerProfile]);
         } else {
-            // SINON (Client ou visiteur), on affiche TOUT
+            // Par défaut, on affiche tout
             $products = $productRepository->findAll();
         }
 
         return $this->render('main/index.html.twig', [
             'products' => $products,
-            'searchTerm' => $searchTerm
+            'categories' => $categories,
+            'searchTerm' => $searchTerm,
+            'currentCategory' => $categoryId // Pour savoir quel bouton est actif
         ]);
     }
 }

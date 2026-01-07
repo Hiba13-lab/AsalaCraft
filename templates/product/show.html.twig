@@ -7,18 +7,18 @@
     <div class="row">
         {# Section Visuelle : Image du produit #}
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-0">
                 {% if product.image %}
-                    <img src="{{ asset('uploads/products/' ~ product.image) }}" class="img-fluid rounded-start" alt="{{ product.name }}">
+                    <img src="{{ asset('uploads/products/' ~ product.image) }}" class="img-fluid rounded" alt="{{ product.name }}">
                 {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
                         <span class="text-muted">Aucune image disponible</span>
                     </div>
                 {% endif %}
             </div>
         </div>
 
-        {# Section Infos : Détails et Actions #}
+        {# Section Infos : Détails #}
         <div class="col-md-6">
             <div class="p-3">
                 <h1 class="display-5 fw-bold">{{ product.name }}</h1>
@@ -32,23 +32,35 @@
                 <hr>
                 
                 <h5>Description</h5>
-                <p class="lead text-muted">{{ product.description|default('Aucune description fournie.') }}</p>
+                <p class="lead text-muted">{{ product.description|default('Aucune description fournie.')|nl2br }}</p>
 
-                <div class="mt-5 p-4 bg-light rounded border">
-                    <h6 class="text-uppercase text-muted mb-3">Administration du produit</h6>
-                    <div class="d-flex gap-2">
-                        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary">
-                            ⬅️ Retour à la liste
-                        </a>
-                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning">
-                            ✏️ Modifier
-                        </a>
-                        {# On inclut le formulaire de suppression fourni par Symfony #}
-                        <div class="ms-auto">
-                            {{ include('product/_delete_form.html.twig') }}
+                {# --- SECTION ACTIONS POUR LE CLIENT --- #}
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-dark btn-lg py-3 rounded-pill fw-bold">
+                        🛒 Ajouter au panier
+                    </button>
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary rounded-pill">
+                        ⬅️ Retour à la boutique
+                    </a>
+                </div>
+
+                {# --- SECTION ADMINISTRATION : CACHÉE POUR LE CLIENT --- #}
+                {# La condition vérifie : 
+                   1. Si l'utilisateur est connecté (app.user)
+                   2. Si le vendeur du produit correspond au profil vendeur de l'utilisateur connecté #}
+                {% if app.user and product.seller == app.user.sellerProfile %}
+                    <div class="mt-5 p-4 bg-light rounded border border-warning shadow-sm">
+                        <h6 class="text-uppercase text-warning fw-bold mb-3">🛠️ Espace Vendeur : Gestion du produit</h6>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning">
+                                ✏️ Modifier
+                            </a>
+                            <div class="ms-auto">
+                                {{ include('product/_delete_form.html.twig') }}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

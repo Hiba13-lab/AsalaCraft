@@ -3,58 +3,75 @@
 {% block title %}AsalaCraft - Boutique d'Artisanat{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="bg-white p-5 mb-5 rounded shadow-sm border text-center">
-        <h1 class="display-4 fw-bold">🎨 Bienvenue sur AsalaCraft</h1>
-        
-        {% if app.user %}
-            <div class="alert alert-info d-inline-block p-4 mt-2 shadow-sm">
-                <h2 class="h4">Bonjour, {{ app.user.email }} !</h2>
-                {% if is_granted('ROLE_SELLER') %}
-                    <a href="{{ path('app_product_index') }}" class="btn btn-warning btn-lg fw-bold shadow border-dark mt-2">
-                        📦 GÉRER MES PRODUITS
-                    </a>
-                {% endif %}
-            </div>
-        {% else %}
-            <div class="bg-light p-4 rounded border mb-4">
-                <a href="{{ path('app_login') }}" class="btn btn-outline-primary">Connexion</a>
-                <a href="{{ path('app_register') }}" class="btn btn-primary ms-2">Créer un compte</a>
-            </div>
-        {% endif %}
+<div class="container mt-5">
+    {# TITRE PRINCIPAL #}
+    <h1 class="text-center display-5 fw-bold mb-4">✨ Découverte l'Artisanat Unique</h1>
 
-        <form action="{{ path('app_home') }}" method="get" class="d-flex justify-content-center mt-4">
-            <input type="text" name="search" class="form-control w-50" placeholder="Rechercher une création..." value="{{ searchTerm }}">
-            <button class="btn btn-dark ms-2" type="submit">🔍 Rechercher</button>
-        </form>
+    {# BARRE DE RECHERCHE #}
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-7">
+            <form action="{{ path('app_home') }}" method="get" class="input-group shadow-sm">
+                <input type="text" name="search" class="form-control border-end-0" placeholder="Rechercher une pièce unique..." value="{{ searchTerm }}">
+                <button class="btn btn-white border border-start-0 text-muted" type="submit">🔍</button>
+            </form>
+        </div>
     </div>
 
-    <h2 class="mb-4">✨ Nos Produits</h2>
+    {# BOUTONS DE FILTRES (CATÉGORIES) #}
+    <div class="text-center mb-5">
+        <p class="text-muted small mb-3">Trier par Catégorie :</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            {# Bouton Tout voir #}
+            <a href="{{ path('app_home') }}" 
+               class="btn btn-sm px-4 rounded-pill {% if not currentCategory %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Tout voir
+            </a>
+            
+            {# Boutons dynamiques #}
+            {% for category in categories %}
+                <a href="{{ path('app_home', {'category': category.id}) }}" 
+                   class="btn btn-sm px-4 rounded-pill {% if currentCategory == category.id %}btn-primary text-white{% else %}btn-outline-secondary{% endif %}">
+                   {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <h2 class="mb-4 fw-bold">** Nos Produits Artisanaux</h2>
+
+    {# GRILLE DE PRODUITS #}
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for product in products %}
             <div class="col">
-                <div class="card h-100 shadow-sm border-0">
-                    <div style="height: 200px; background: #f8f9fa;" class="d-flex align-items-center justify-content-center">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative">
+                    {# Badge catégorie sur l'image #}
+                    {% if product.category %}
+                        <span class="badge bg-primary position-absolute m-3" style="z-index: 10;">{{ product.category.name }}</span>
+                    {% endif %}
+
+                    <div style="height: 250px; background: #f0f0f0;">
                         {% if product.image %}
                             <img src="{{ asset('uploads/products/' ~ product.image) }}" class="card-img-top h-100 w-100" style="object-fit: cover;">
                         {% else %}
-                            <span class="text-muted">Pas d'image</span>
+                            <div class="h-100 d-flex align-items-center justify-content-center text-muted">Pas d'image</div>
                         {% endif %}
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">{{ product.name }}</h5>
-                        {% if product.category %}
-                            <span class="badge bg-info text-dark mb-2">{{ product.category.name }}</span>
-                        {% endif %}
-                        <p class="text-primary fw-bold h4">{{ product.price }} €</p>
-                        {# UTILISATION DE L'ID POUR ÉVITER LES ERREURS #}
-                        <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-outline-dark btn-sm mt-2">Voir détails</a>
+
+                    <div class="card-body px-3 pb-4">
+                        <h5 class="card-title fw-bold mb-1">{{ product.name }}</h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="h4 text-primary fw-bold mb-0">{{ product.price }} €</span>
+                            <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-dark btn-sm rounded-pill px-3">
+                                Voir détails
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         {% else %}
             <div class="col-12 text-center py-5">
-                <p class="lead text-muted">Aucun produit trouvé. 🏺</p>
+                <p class="lead text-muted">Aucun produit ne correspond à votre recherche. 🏺</p>
+                <a href="{{ path('app_home') }}" class="btn btn-link">Réinitialiser les filtres</a>
             </div>
         {% endfor %}
     </div>

@@ -48,6 +48,11 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // --- FIX SLUG : INDISPENSABLE POUR ÉVITER L'ERREUR 500 ---
+            $product->setSlug($slugger->slug($product->getName())->lower());
+            // ---------------------------------------------------------
+
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $newFilename = $slugger->slug(pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME)).'-'.uniqid().'.'.$imageFile->guessExtension();
@@ -58,8 +63,10 @@ final class ProductController extends AbstractController
                     $this->addFlash('error', "Erreur image.");
                 }
             }
+            
             $entityManager->persist($product);
             $entityManager->flush();
+
             return $this->redirectToRoute('app_product_index');
         }
 
@@ -84,6 +91,10 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // On met à jour le slug si le nom a changé
+            $product->setSlug($slugger->slug($product->getName())->lower());
+
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $newFilename = $slugger->slug(pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME)).'-'.uniqid().'.'.$imageFile->guessExtension();
