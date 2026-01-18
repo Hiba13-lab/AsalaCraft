@@ -3,8 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Product;
-use App\Entity\Category; // IMPORTATION de l'entité Category
-use Symfony\Bridge\Doctrine\Form\Type\EntityType; // IMPORTATION du type de champ de relation
+use App\Entity\Category;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -24,13 +24,12 @@ class ProductType extends AbstractType
                 'label' => 'Nom du produit',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Vase en céramique']
             ])
-            // NOUVEAU : Champ Catégorie ajouté ici
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'name', // Affiche le nom de la catégorie dans la liste
+                'choice_label' => 'name',
                 'label' => 'Catégorie du produit',
                 'placeholder' => '--- Choisir une catégorie ---',
-                'attr' => ['class' => 'form-select'] // Utilisation de form-select pour Bootstrap 5
+                'attr' => ['class' => 'form-select']
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description détaillée',
@@ -39,23 +38,45 @@ class ProductType extends AbstractType
             ])
             ->add('price', NumberType::class, [
                 'label' => 'Prix (en €)',
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'min' => '0.01', 
+                    'step' => '0.01' 
+                ]
             ])
+            
+            // --- Champ Stock ---
             ->add('stock', IntegerType::class, [
                 'label' => 'Quantité en stock',
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'min' => '0', 
+                    'step' => '1' 
+                ]
             ])
+            
+            // =========================================================
+            // NOUVEAU : CHAMP DE SEUIL D'ALERTE AJOUTÉ
+            // =========================================================
+            ->add('alertThreshold', IntegerType::class, [
+                'label' => 'Seuil d\'alerte stock faible',
+                'help' => 'Quantité à partir de laquelle l\'alerte de réapprovisionnement se déclenche.',
+                'attr' => [
+                    'class' => 'form-control',
+                    'min' => '0',
+                    'step' => '1'
+                ]
+            ])
+            // =========================================================
+
             ->add('image', FileType::class, [
                 'label' => 'Photo du produit (Fichiers JPG ou PNG uniquement)',
-                'mapped' => false,
+                'mapped' => false, // Important si vous ne mappez pas directement la propriété image à un fichier
                 'required' => false,
                 'constraints' => [
                     new File(
                         maxSize: '2M',
-                        mimeTypes: [
-                            'image/jpeg',
-                            'image/png',
-                        ],
+                        mimeTypes: ['image/jpeg', 'image/png'],
                         mimeTypesMessage: 'Veuillez uploader une image JPG ou PNG valide (max 2Mo).',
                     )
                 ],

@@ -6,9 +6,6 @@ use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Product>
- */
 class ProductRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -17,13 +14,23 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * Méthode personnalisée pour filtrer le catalogue par nom ou description
+     * FILTRE STRICT : Récupère uniquement les produits d'un vendeur précis
      */
+    public function findBySellerId(int $sellerId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.seller = :val')
+            ->setParameter('val', $sellerId)
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findBySearchTerm(string $term): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.name LIKE :term OR p.description LIKE :term')
-            ->setParameter('term', '%' . $term . '%') // Le % permet de trouver le mot n'importe où
+            ->setParameter('term', '%' . $term . '%')
             ->orderBy('p.name', 'ASC')
             ->getQuery()
             ->getResult();

@@ -1,0 +1,39 @@
+{# templates/artisan/dashboard/product_settings.html.twig (Partie du corps du tableau - <tbody>) #}
+
+<tbody>
+    {% for product in products %}
+        
+        {# 1. DÉFINIR LA CONDITION D'ALERTE : Stock <= Seuil #}
+        {% set isStockLow = product.stock <= product.alertThreshold %}
+        
+        {# 2. APPLIQUER UNE CLASSE DE DANGER À LA LIGNE SI LE STOCK EST FAIBLE #}
+        <tr {% if isStockLow and product.stock > 0 %}class="table-warning"{% elseif product.stock <= 0 %}class="table-danger"{% endif %}>
+            
+            {# ... (Autres colonnes du tableau : Nom, Prix, Catégorie, etc.) ... #}
+            
+            {# ================================================ #}
+            {# COLONNE STOCK (À REMPLACER/MODIFIER) #}
+            {# ================================================ #}
+            <td>
+                {# 3. AFFICHAGE CONDITIONNEL : Rupture, Alerte ou Normal #}
+                {% if product.stock <= 0 %}
+                    <span class="text-danger fw-bold">
+                        <i class="fas fa-times-circle me-1"></i> Rupture de Stock
+                    </span>
+                {% elseif isStockLow %}
+                    <span class="text-warning fw-bold">
+                        <i class="fas fa-exclamation-triangle me-1"></i> Alerte Faible ({{ product.stock }})
+                    </span>
+                {% else %}
+                    <span class="text-success">{{ product.stock }}</span>
+                {% endif %}
+                
+                {# Afficher le seuil d'alerte pour référence #}
+                <small class="text-muted d-block">(Seuil: {{ product.alertThreshold }})</small>
+            </td>
+            
+            {# ... (Autres colonnes : Actions, etc.) ... #}
+
+        </tr>
+    {% endfor %}
+</tbody>

@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finaliser ma commande - AsalaCraft{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <h1 class="mb-4">📦 Finalisation de la commande</h1>
+
+    <div class="row">
+        {# COLONNE GAUCHE : FORMULAIRE #}
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white p-3">
+                    <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Informations de livraison</h5>
+                </div>
+                <div class="card-body p-4">
+                    {{ form_start(checkoutForm) }}
+                        
+                        <div class="mb-3">
+                            {{ form_label(checkoutForm.fullName) }}
+                            {{ form_widget(checkoutForm.fullName, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom complet'}}) }}
+                            {{ form_errors(checkoutForm.fullName) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(checkoutForm.shippingAddress) }}
+                            {{ form_widget(checkoutForm.shippingAddress, {'attr': {'class': 'form-control', 'placeholder': 'N° de rue, Ville, Code Postal...'}}) }}
+                            {{ form_errors(checkoutForm.shippingAddress) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(checkoutForm.paymentMethod) }}
+                            <div class="p-3 border rounded bg-light">
+                                {{ form_widget(checkoutForm.paymentMethod) }}
+                            </div>
+                            {{ form_errors(checkoutForm.paymentMethod) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow">
+                            <i class="fas fa-check-circle me-2"></i>Confirmer et payer {{ total|number_format(2) }} €
+                        </button>
+
+                    {{ form_end(checkoutForm) }}
+                </div>
+            </div>
+        </div>
+
+        {# COLONNE DROITE : RÉCAPITULATIF #}
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 bg-light sticky-top" style="top: 20px;">
+                <div class="card-header bg-secondary text-white p-3">
+                    <h5 class="mb-0">Résumé du panier</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in items %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                <small class="text-muted">Quantité : {{ item.quantity }}</small>
+                            </div>
+                            <span class="fw-bold">{{ (item.unitPrice * item.quantity)|number_format(2) }} €</span>
+                        </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between h4 mb-0">
+                        <span>Total</span>
+                        <span class="text-primary">{{ total|number_format(2) }} €</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 text-center pb-3">
+                    <a href="{{ path('app_cart_index') }}" class="btn btn-link text-muted text-decoration-none small">
+                        <i class="fas fa-edit me-1"></i>Modifier mon panier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

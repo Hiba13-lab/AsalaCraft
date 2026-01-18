@@ -16,7 +16,7 @@
                     <tr>
                         <th>Image</th>
                         <th>Nom</th>
-                        <th>Catégorie</th> {# NOUVELLE COLONNE #}
+                        <th>Catégorie</th>
                         <th>Prix</th>
                         <th>Stock</th>
                         <th class="text-center">Actions</th>
@@ -34,7 +34,6 @@
                         </td>
                         <td class="fw-bold">{{ product.name }}</td>
                         <td>
-                            {# AFFICHAGE DE LA CATÉGORIE #}
                             {% if product.category %}
                                 <span class="badge bg-info text-dark">{{ product.category.name }}</span>
                             {% else %}
@@ -43,10 +42,12 @@
                         </td>
                         <td>{{ product.price }} €</td>
                         <td>
-                            {% if product.stock < 10 %}
-                                <span class="text-danger fw-bold">{{ product.stock }}</span>
+                            {% if product.stock <= 0 %}
+                                <span class="badge bg-danger">Rupture de stock</span>
+                            {% elseif product.stock < 10 %}
+                                <span class="badge bg-warning text-dark">Attention : {{ product.stock }} restants</span>
                             {% else %}
-                                {{ product.stock }}
+                                <span class="badge bg-success">{{ product.stock }} en stock</span>
                             {% endif %}
                         </td>
                         <td class="text-center">

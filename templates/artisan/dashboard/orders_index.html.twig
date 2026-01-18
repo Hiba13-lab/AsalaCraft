@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des commandes - AsalaCraft{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-shopping-basket text-primary"></i> Mes Commandes reçues</h1>
+        <span class="badge bg-secondary">{{ orders|length }} commande(s) au total</span>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Produits commandés</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr class="align-middle">
+                            <td><span class="fw-bold text-muted">#{{ order.id }}</span></td>
+                            <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>{{ order.user.profileName }}</td>
+                            <td>
+                                <ul class="list-unstyled mb-0 small">
+                                    {% for item in order.orderItems %}
+                                        <li>• {{ item.product.name }} (x{{ item.quantity }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="fw-bold">{{ order.total }} €</td>
+                            <td>
+                                {% set badge_color = 'bg-primary' %}
+                                {% if order.status == 'Terminée' %}{% set badge_color = 'bg-success' %}
+                                {% elseif order.status == 'Annulée' %}{% set badge_color = 'bg-danger' %}
+                                {% elseif order.status == 'Expédiée' %}{% set badge_color = 'bg-info' %}
+                                {% endif %}
+                                <span class="badge {{ badge_color }}">{{ order.status }}</span>
+                            </td>
+                            <td>
+                                <form action="{{ path('app_seller_order_update_status', {'id': order.id}) }}" method="post" class="d-flex gap-2">
+                                    <select name="new_status" class="form-select form-select-sm">
+                                        <option value="Nouvel(le)" {% if order.status == 'Nouvel(le)' %}selected{% endif %}>Nouvel(le)</option>
+                                        <option value="En traitement" {% if order.status == 'En traitement' %}selected{% endif %}>En traitement</option>
+                                        <option value="Expédiée" {% if order.status == 'Expédiée' %}selected{% endif %}>Expédiée</option>
+                                        <option value="Terminée" {% if order.status == 'Terminée' %}selected{% endif %}>Terminée</option>
+                                        <option value="Annulée" {% if order.status == 'Annulée' %}selected{% endif %}>Annulée</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-success" title="Mettre à jour">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                                Aucune commande reçue pour le moment.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

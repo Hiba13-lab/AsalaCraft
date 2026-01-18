@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Panier - AsalaCraft{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>🛒 Mon Panier</h1>
+
+    {% if items | length > 0 %}
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <table class="table align-middle border shadow-sm bg-white">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image %}
+                                            <img src="{{ asset('uploads/products/' ~ item.product.image) }}" width="50" height="50" class="rounded me-2 shadow-sm" style="object-fit: cover;">
+                                        {% endif %}
+                                        <strong>{{ item.product.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>{{ item.product.price|number_format(2) }} €</td>
+                                <td><span class="badge bg-light text-dark border">{{ item.quantity }}</span></td>
+                                <td class="fw-bold">{{ (item.product.price * item.quantity)|number_format(2) }} €</td>
+                                <td class="text-center">
+                                    <a href="{{ path('app_cart_remove', {'id': item.product.id}) }}" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Retirer
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm border-0 bg-light">
+                    <h4>Résumé de la commande</h4>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Total à payer :</span>
+                        <span class="h5 text-primary fw-bold">{{ total|number_format(2) }} €</span>
+                    </div>
+                    
+                    {# LIEN VERS LE CHECKOUT #}
+                    <a href="{{ path('app_checkout') }}" class="btn btn-dark btn-lg w-100 rounded-pill mb-3">
+                        Passer au paiement <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    
+                    <a href="{{ path('app_home') }}" class="btn btn-link w-100 text-muted text-decoration-none">
+                        <i class="fas fa-chevron-left me-1"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5 bg-white shadow-sm rounded">
+            <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
+            <p class="lead">Votre panier est vide pour le moment. 🏺</p>
+            <a href="{{ path('app_home') }}" class="btn btn-primary rounded-pill px-4">Découvrir nos créations</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

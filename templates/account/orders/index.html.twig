@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Historique de Commandes{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <h1>Historique de Commandes</h1>
+        <hr>
+
+        {# Messages Flash (par exemple, succès après la validation du checkout) #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success" role="alert">{{ message }}</div>
+        {% endfor %}
+
+        {% if orders|length > 0 %}
+            <table class="table table-striped align-middle table-hover">
+                <thead>
+                    <tr>
+                        <th>Réf. Commande</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                            <td><span class="fw-bold">{{ order.total|number_format(2, ',', ' ') }} €</span></td>
+                            <td>
+                                {# 
+                                Les statuts de commande (CdC 7.4) sont mappés à des couleurs Bootstrap (badges).
+                                - Nouvel(le), Payée, En traitement, Expédiée, Terminée, Annulée
+                                #}
+                                {% set statusClass = {
+                                    'Nouvel(le)': 'info',
+                                    'Payée': 'primary',
+                                    'En traitement': 'primary',
+                                    'Expédiée': 'warning',
+                                    'Terminée': 'success',
+                                    'Annulée': 'danger'
+                                } %}
+                                <span class="badge bg-{{ statusClass[order.status] ?? 'secondary' }} text-dark-emphasis">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {# Lien vers l'action de détail de commande que nous venons de créer #}
+                                <a href="{{ path('app_account_order_show', {'id': order.id}) }}" class="btn btn-sm btn-outline-dark">
+                                    Voir les détails
+                                </a>
+                                
+                                {# Optionnel: Lien pour télécharger la facture (à implémenter plus tard) #}
+                                {# <a href="{{ path('app_account_order_invoice', {'id': order.id}) }}" class="btn btn-sm btn-outline-info ms-2">
+                                    Facture PDF
+                                </a> #}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="text-center py-5">
+                <p class="lead">Vous n'avez pas encore passé de commande. Commencez vos achats ! 🛍️</p>
+                <a href="{{ path('app_home') }}" class="btn btn-primary">Retourner à la boutique</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
