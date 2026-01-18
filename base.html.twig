@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+    </head>
+    <body>
+        <main style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+            {# --- SECTION DES MESSAGES FLASH --- #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div style="padding: 15px; margin-bottom: 20px; border-radius: 4px; 
+                        {{ label == 'success' ? 'background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : 'background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {# --- LE SEUL ET UNIQUE BLOC BODY --- #}
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>
